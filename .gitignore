@@ -1,0 +1,5 @@
+node_modules/
+tasks.db
+tasks.db-journal
+.DS_Store
+*.log
