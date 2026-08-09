@@ -67,6 +67,20 @@ app.get("/tasks/:id", (req, res) => {
   res.status(200).json(formatTask(row));
 });
 
+app.post("/tasks", (req, res) => {
+  const { title, done } = req.body || {};
+
+  if (!title || typeof title !== "string" || title.trim() === "") {
+    return res.status(400).json({ error: "Title is required" });
+  }
+
+  const isDone = done === true || done === 1 ? 1 : 0;
+  const info = db.prepare("INSERT INTO tasks (title, done) VALUES (?, ?)").run(title.trim(), isDone);
+  const newTaskRow = db.prepare("SELECT * FROM tasks WHERE id = ?").get(info.lastInsertRowid);
+
+  res.status(201).json(formatTask(newTaskRow));
+});
+
 if (require.main === module) {
   app.listen(PORT, () => {
     console.log("Server running on http://localhost:" + PORT);
